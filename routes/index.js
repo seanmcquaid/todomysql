@@ -1,15 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
-var mysql      = require('mysql');
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'db1',
-  password : 'roasted',
-  database : 'restaurant_db'
-});
+var mysql = require('mysql');
+const config = require("../config");
+var connection = mysql.createConnection(config);
  
 connection.connect();
+console.log("I'm connected");
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
