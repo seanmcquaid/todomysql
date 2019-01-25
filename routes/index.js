@@ -63,4 +63,45 @@ router.get("/delete/:id", (req, res, next)=>{
   });
 });
 
+function formatDate(date) {
+  let d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+
+  return [year, month, day].join('-');
+}
+
+router.get("/edit/:id", (req, res, next)=>{
+  // this route should be a pre populated form with the element with this ID values
+  // res.json(req.params.id);
+  const selectQuery = `SELECT * FROM tasks
+  WHERE id = ?;`;
+  // results = data from SQL query
+  connection.query(selectQuery,[req.params.id], (error, results)=>{
+    let formattedDate = formatDate(results[0].taskDate)
+    results[0].taskDate = formattedDate;
+    res.render("edit", {
+      task: results[0]
+    });
+  });
+});
+
+
+router.post("/editItem", (req,res)=>{
+  const updateQuery = ` UPDATE tasks SET
+  taskName = ?,
+  taskDate = ?;`;
+  connection.query(updateQuery,[req.body.newTask, req.body.newTaskDate, req.body.taskId], (error, results)=>{
+    if(error){
+      throw error;
+    } else{
+      res.redirect("/");
+    };
+  });
+});
+
 module.exports = router;
